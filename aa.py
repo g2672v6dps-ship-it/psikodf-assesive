@@ -8179,7 +8179,7 @@ def yks_takip_page(user_data):
     learning_style = user_data.get('learning_style', '')
     
     # YKS Takip sistemi sekmeleri
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["📋 Haftalık Planlama", "📊 Gidişat Analizi", "💪 Zorlandığım Konular", "🔄 Tekrar Edilecek Konular", "💬 Koçuma veya Psiko DÖNÜŞ Sistem Danışmanı"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["📋 Haftalık Planlama", "📊 Gidişat Analizi", "💪 Zorlandığım Konular", "🔄 Tekrar Edilecek Konular", "💬 Koçuma veya PsikoDÖNÜŞ Sistem Danışmanına gönder"])
     
     with tab1:
         # Hedef bölüm taban puanları ve net karşılaştırması
@@ -8303,7 +8303,7 @@ def show_coach_communication_section(user_data):
     """Koç/Öğrenci iletişim sekmesi"""
     st.markdown("""
     <div style="text-align: center; margin-bottom: 30px;">
-        <h2 style="color: #DC143C; margin: 0;">💬 Koçuma veya Psiko DÖNÜŞ Sistem Danışmanı</h2>
+        <h2 style="color: #DC143C; margin: 0;">💬 Koçuma veya PsikoDÖNÜŞ Sistem Danışmanına gönder</h2>
         <p style="color: #666; font-size: 16px; margin: 10px 0;">
             Düşüncelerinizi, sorularınızı veya yardıma ihtiyacınızı paylaşın
         </p>
@@ -8501,7 +8501,7 @@ def show_notifications_page(user_data):
                 </div>
                 """, unsafe_allow_html=True)
         else:
-            st.info("📭 Henüz koça mesaj göndermediniz. 'Koçuma veya Psiko DÖNÜŞ Sistem Danışmanı' sekmesinden mesaj gönderebilirsiniz.")
+            st.info("📭 Henüz koça mesaj göndermediniz. 'Koçuma veya PsikoDÖNÜŞ Sistem Danışmanına gönder' sekmesinden mesaj gönderebilirsiniz.")
 
 def show_weekly_planner(user_data):
     """YENİ SİSTEMATİK HAFTALİK PLANLAMA SİSTEMİ"""
@@ -20213,6 +20213,20 @@ def main():
                                           ["🏠 Ana Sayfa", "📚 Konu Takip", "🧠 Çalışma Teknikleri","🎯 YKS Canlı Takip", "🍅 Pomodoro Zamanlayıcısı", "🏆 Rekabet Panosu", "🧠 Psikolojim","🔬Detaylı Deneme Analiz Takibi","📊 İstatistikler", "🎮 Oyunlarım", "🎬 YKS Serüvenim", "🔔 Bildirimler"])
                 st.markdown("---")
                 
+                # 📱 BİLDİRİMLER BUTONU - "🌐 Sayfa Seçin" altında
+                unread_count = get_unread_notifications_count(st.session_state.current_user)
+                notification_text = f"🔔 Bildirimler"
+                if unread_count > 0:
+                    notification_text += f" ({unread_count})"
+                
+                if st.button(notification_text, key="notification_button", use_container_width=True, help="Bildirimlerinizi görüntülemek için tıklayın"):
+                    st.session_state.sidebar_page = "🔔 Bildirimler"
+                    
+                # Session state ile sayfa kontrolü
+                if 'sidebar_page' in st.session_state and st.session_state.sidebar_page == "🔔 Bildirimler":
+                    show_notifications_page()
+                    st.session_state.sidebar_page = None  # Reset
+                
                 bg_style = BACKGROUND_STYLES.get(target_dept, BACKGROUND_STYLES["Varsayılan"])
                 st.markdown(f"### {bg_style['icon']} Hoş geldin, {user_data.get('name', 'Öğrenci')}!")
                 st.markdown(f"**🎯 Hedef:** {user_data.get('target_department', 'Belirlenmedi')}")
@@ -20300,25 +20314,7 @@ def main():
                         st.session_state.current_user = None
                         st.rerun()
                 
-                # Bildirim simgesi - Sidebar'ın altında (clickable)
-                st.markdown("---")
-                unread_count = get_unread_notifications_count(st.session_state.current_user)
-                notification_text = f"🔔 Bildirimler"
-                if unread_count > 0:
-                    notification_text += f" ({unread_count})"
                 
-                # Clickable bildirim butonu
-                if st.button(notification_text, key="notification_button", use_container_width=True, help="Bildirimlerinizi görüntülemek için tıklayın"):
-                    # Bildirimler sayfasına git
-                    st.session_state.sidebar_page = "🔔 Bildirimler"
-                    
-                # Session state ile sayfa kontrolü
-                if 'sidebar_page' in st.session_state and st.session_state.sidebar_page == "🔔 Bildirimler":
-                    show_notifications_page()
-                    st.session_state.sidebar_page = None  # Reset
-                
-
-            
             if page == "🏠 Ana Sayfa":
                 # Eski session verilerini temizle - her gün güncel sistem!
                 clear_outdated_session_data()
